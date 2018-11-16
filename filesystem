@@ -1,0 +1,127 @@
+import sys
+import irobotq_robotdriver as i
+
+global speed1
+global speed2
+speed1 = -2
+speed2 = 2
+
+
+def main():
+    gostraight()
+    goright()
+    gostraight()
+    goahead()
+    gostraight()
+    goleft()
+    gostraight()
+    goahead()
+    gostraight()
+    while True:
+        gostraight()
+
+
+def gostraight():
+    while ((i.get_gray(34) < 200) & (i.get_gray(35) < 200)):
+        straight()
+
+
+def straight():
+    if ((i.get_dist(31) - i.get_dist(33)) > 100):
+        i.set_motors(1, 42, 2, 42, 3, 50, 4, 50)
+    elif ((i.get_dist(33) - i.get_dist(31)) > 100):
+        i.set_motors(1, 50, 2, 50, 3, 42, 4, 42)
+    else:
+        i.set_motors(1, 50, 2, 50, 3, 50, 4, 50)
+    fly()
+    get()
+
+
+def gohead():
+    print('gohead start')
+    i.start_time()
+    while (i.get_time() < 1250):
+        straight()
+        get()
+    print('gohead stop')
+
+
+def goahead():
+    i.sleep(100)
+    print('goahead start')
+    i.start_time()
+    while ((i.get_gray(34) < 200) & (i.get_gray(35) < 200)):
+        straight()
+    i.sleep(100)
+    print('goahead stop')
+
+
+def goleft():
+    compassgo = i.get_compass(45)
+    compassto = compassgo + 90
+    if (compassto > 360):
+        compassto = compassto - 360
+    critical = compassgo - 180
+    if (critical < 360):
+        critical = critical + 360
+    while (i.get_compass(45) != compassto):
+        if ((i.get_compass(45) < critical) | (i.get_compass(45) > compassto)):
+            i.set_motors(1, speed2, 2, speed2, 3, speed1, 4, speed1)
+        else:
+            i.set_motors(1, speed1, 2, speed1, 3, speed2, 4, speed2)
+    while ((i.get_gray(34) < 200) & (i.get_gray(35) < 200)):
+        straight()
+    i.start_time()
+    while (i.get_time() < 1000):
+        straight()
+
+
+def goright():
+    compassgo = i.get_compass(45)
+    compassto = compassgo - 90
+    if (compassto < 0):
+        compassto = compassto + 360
+    critical = compassgo + 90
+    if (critical > 360):
+        critical = critical - 360
+    while (i.get_compass(45) != compassto):
+        if ((i.get_compass(45) < critical) | (i.get_compass(45) > compassto)):
+            i.set_motors(1, speed2, 2, speed2, 3, speed1, 4, speed1)
+        else:
+            i.set_motors(1, speed1, 2, speed1, 3, speed2, 4, speed2)
+    while ((i.get_gray(34) < 200) & (i.get_gray(35) < 200)):
+        straight()
+    i.start_time()
+    while (i.get_time() < 1000):
+        straight()
+
+
+def get():
+    if (i.get_light_signal(39) > 150):
+        i.set_joints(91, 90)
+    elif (i.get_light_signal(40) > 150):
+        i.set_joints(91, -90)
+    else:
+        i.set_joints(91, 0)
+
+
+def fly():
+    if (i.get_height(37) > 100):
+        i.set_motors(1, 50, 2, 50, 3, 50, 4, 50)
+        i.sleep(100)
+
+
+if __name__ == '__main__':
+    try:
+        ret = i.init(sys.argv[1], sys.argv[2], int(sys.argv[3]))
+        if(ret == 0):
+            main()
+            i.over()
+        else:
+            print('Error! Error code:%d' % ret)
+            print('Press any button to exit')
+            v = input()
+    except Exception as e:
+        print(e)
+        print('Press any button to exit')
+        v = input()
