@@ -1,0 +1,101 @@
+import sys
+from pyhooked import Hook, KeyboardEvent
+import irobotq_robotdriver as i
+
+
+def main():
+    hk = Hook()
+    hk.handler = KeyboardEventHandler
+    hk.hook()
+
+
+def KeyboardEventHandler(agrs):
+    if agrs.event_type == 'key down':
+        if agrs.current_key == 'S':
+            gostraight()
+        if agrs.current_key == 'W':
+            back()
+        if agrs.current_key == 'A':
+            left()
+        if agrs.current_key == 'D':
+            right()
+        if agrs.current_key == 'J':
+            i.set_motors(1, -10, 2, -10, 3, 10, 4, 10)
+            i.sleep(1)
+            i.stop_all_motor()
+        if agrs.current_key == 'L':
+            i.set_motors(1, 10, 2, 10, 3, -10, 4, -10)
+            i.sleep(1)
+            i.stop_all_motor()
+        if agrs.current_key == 'I':
+            i.set_motors(1, 100, 2, 100, 3, 100, 4, 100)
+            i.sleep(10)
+            i.stop_all_motor()
+        if agrs.current_key == 'K':
+            i.set_motors(1, -100, 2, -100, 3, -100, 4, -100)
+            i.sleep(10)
+            i.stop_all_motor()
+        if agrs.current_key == 'Space':
+            i.stop_all_motor()
+    if agrs.event_type == 'key up':
+        i.stop_all_motor()
+
+
+def gostraight():
+    if ((i.get_dist(31) - i.get_dist(33)) > 100):
+        i.set_motors(1, 42, 2, 42, 3, 50, 4, 50)
+    elif ((i.get_dist(33) - i.get_dist(31)) > 100):
+        i.set_motors(1, 50, 2, 50, 3, 42, 4, 42)
+    else:
+        i.set_motors(1, 50, 2, 50, 3, 50, 4, 50)
+    fly()
+    get()
+
+
+def back():
+    i.set_motors(1, -20, 2, -20, 3, 20, 4, 20)
+    i.sleep(400)
+    i.stop_all_motor()
+
+
+def left():
+    i.set_motors(1, -20, 2, -20, 3, 20, 4, 20)
+    i.sleep(200)
+    i.stop_all_motor()
+
+
+def right():
+    i.set_motors(1, 20, 2, 20, 3, -20, 4, -20)
+    i.sleep(200)
+    i.stop_all_motor()
+
+
+def fly():
+    if (i.get_height(37) > 100):
+        i.set_motors(1, 50, 2, 50, 3, 50, 4, 50)
+        i.sleep(125)
+
+
+def get():
+    if (i.get_light_signal(39) > 150):
+        i.set_joints(91, 90)
+    elif (i.get_light_signal(40) > 150):
+        i.set_joints(91, -90)
+    else:
+        i.set_joints(91, 0)
+
+
+if __name__ == '__main__':
+    try:
+        ret = i.init(sys.argv[1], sys.argv[2], int(sys.argv[3]))
+        if(ret == 0):
+            main()
+            i.over()
+        else:
+            print('Error! Error code:%d' % ret)
+            print('Press any button to exit')
+            v = input()
+    except Exception as e:
+        print(e)
+        print('Press any button to exit')
+        v = input()
