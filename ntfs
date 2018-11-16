@@ -1,0 +1,54 @@
+def test():
+    
+    d1=r.get_dist(31)
+    d2=r.get_dist(32)
+    d=d1-d2
+    ls=250
+    rs=250
+    if d > 25:
+        ls=ls-25
+        rs=rs+25
+        r.set_motors(1,ls,2,ls,3,rs,4,rs)
+    else:
+        if d < -25:
+            rs=rs-25
+            ls=ls+25
+            r.set_motors(1,ls,2,ls,3,rs,4,rs)
+        else:
+            r.set_motors(1,ls,2,ls,3,rs,4,rs)
+ 
+def main():
+    while 1==1:
+        d1=r.get_dist(31)
+        d2=r.get_dist(32)
+        d=d2-d1
+        if d>800:
+            r.set_motors(1,-300,2,-300,3,-300,4,-300)
+            r.sleep(450)
+            r.set_motors(1,300,2,300,3,-300,4,-300)
+            r.sleep(325)
+            r.set_motors(1,300,2,300,3,300,4,300)
+            r.sleep(300)
+            while 1==1:
+                test()
+        test()
+
+import sys
+import irobotq_robotdriver as r
+
+if __name__ == '__main__':
+
+    try:
+        ret=r.init(sys.argv[1],sys.argv[2],int(sys.argv[3]))
+        if(ret == 0):
+            main()
+            r.over()
+            print("机器人程序运行结束")
+        else:
+            print('初始化错误，错误码:%d' % ret)
+        print('按任意键退出')
+        v=input()
+    except Exception as e:
+        print (e)
+        print('按任意键退出')
+        v=input()
