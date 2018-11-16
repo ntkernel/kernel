@@ -1,62 +1,41 @@
 import sys
 import irobotq_robotdriver as i
 
-global speed1
-global speed2
-speed1 = -2
-speed2 = 2
+global speed1, speed2, speed3, speed4
+speed1 = -5
+speed2 = 5
+speed3 = -2
+speed4 = 2
+
 
 
 def main():
-    gostraight()
-    goright()
-    gostraight()
-    goahead()
-    gostraight()
-    goleft()
-    gostraight()
-    goahead()
-    gostraight()
+    gs()
+    gr()
+    gs()
+    ga()
+    gs()
+    gl()
+    gs()
+    ga()
+    gs()
     while True:
-        gostraight()
+        gs()
 
 
-def gostraight():
+def gs():
     while ((i.get_gray(34) < 200) & (i.get_gray(35) < 200)):
-        straight()
+        fs()
+        ff()
 
 
-def straight():
-    if ((i.get_dist(31) - i.get_dist(33)) > 100):
-        i.set_motors(1, 42, 2, 42, 3, 50, 4, 50)
-    elif ((i.get_dist(33) - i.get_dist(31)) > 100):
-        i.set_motors(1, 50, 2, 50, 3, 42, 4, 42)
-    else:
-        i.set_motors(1, 50, 2, 50, 3, 50, 4, 50)
-    fly()
-    get()
-
-
-def gohead():
-    print('gohead start')
+def ga():
     i.start_time()
-    while (i.get_time() < 1250):
-        straight()
-        get()
-    print('gohead stop')
+    while ((i.get_gray(34) < 200) & (i.get_gray(35) < 200) | (i.get_time() < 2000)):
+        fs()
 
 
-def goahead():
-    i.sleep(100)
-    print('goahead start')
-    i.start_time()
-    while ((i.get_gray(34) < 200) & (i.get_gray(35) < 200)):
-        straight()
-    i.sleep(100)
-    print('goahead stop')
-
-
-def goleft():
+def gl():
     compassgo = i.get_compass(45)
     compassto = compassgo + 90
     if (compassto > 360):
@@ -66,17 +45,17 @@ def goleft():
         critical = critical + 360
     while (i.get_compass(45) != compassto):
         if ((i.get_compass(45) < critical) | (i.get_compass(45) > compassto)):
-            i.set_motors(1, speed2, 2, speed2, 3, speed1, 4, speed1)
-        else:
             i.set_motors(1, speed1, 2, speed1, 3, speed2, 4, speed2)
+        else:
+            i.set_motors(1, speed2, 2, speed2, 3, speed1, 4, speed1)
     while ((i.get_gray(34) < 200) & (i.get_gray(35) < 200)):
-        straight()
+        fs()
     i.start_time()
     while (i.get_time() < 1000):
-        straight()
+        fs()
 
 
-def goright():
+def gr():
     compassgo = i.get_compass(45)
     compassto = compassgo - 90
     if (compassto < 0):
@@ -86,17 +65,34 @@ def goright():
         critical = critical - 360
     while (i.get_compass(45) != compassto):
         if ((i.get_compass(45) < critical) | (i.get_compass(45) > compassto)):
-            i.set_motors(1, speed2, 2, speed2, 3, speed1, 4, speed1)
+            i.set_motors(1, speed4, 2, speed4, 3, speed3, 4, speed3)
         else:
-            i.set_motors(1, speed1, 2, speed1, 3, speed2, 4, speed2)
+            i.set_motors(1, speed3, 2, speed3, 3, speed4, 4, speed4)
     while ((i.get_gray(34) < 200) & (i.get_gray(35) < 200)):
-        straight()
+        fs()
     i.start_time()
     while (i.get_time() < 1000):
-        straight()
+        fs()
 
 
-def get():
+def gas():
+    i.start_time()
+    while (i.get_time() < 1250):
+        i.set_motors(1, 50, 2, 50, 3, 50, 4, 50)
+        fg()
+
+
+def fs():
+    if ((i.get_dist(31) - i.get_dist(33)) > 100):
+        i.set_motors(1, 42, 2, 42, 3, 50, 4, 50)
+    elif ((i.get_dist(33) - i.get_dist(31)) > 100):
+        i.set_motors(1, 50, 2, 50, 3, 42, 4, 42)
+    else:
+        i.set_motors(1, 50, 2, 50, 3, 50, 4, 50)
+    fg()
+
+
+def fg():
     if (i.get_light_signal(39) > 150):
         i.set_joints(91, 90)
     elif (i.get_light_signal(40) > 150):
@@ -105,7 +101,7 @@ def get():
         i.set_joints(91, 0)
 
 
-def fly():
+def ff():
     if (i.get_height(37) > 100):
         i.set_motors(1, 50, 2, 50, 3, 50, 4, 50)
         i.sleep(100)
