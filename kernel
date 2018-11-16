@@ -1,11 +1,11 @@
 def main():
     while 1==1:
         px,py=p.size()
-        px=px/2
-        py=py/2
+        ox=px/2
+        oy=py/2
         x,y = p.position()
-        y=(py-y)*7/9
-        x=(x-px)/8
+        y=(oy-y)*700/py
+        x=(x-ox)*200/px
         ls=int(x+y)
  
         rs=int(y-x)
