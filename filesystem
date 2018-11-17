@@ -31,10 +31,10 @@ def ga():
 def gl():
     print('gl')
     compassgo = i.get_compass(45)
-    compassto = compassgo + 90
+    compassto = compassgo + 85
     if (compassto > 360):
         compassto = compassto - 360
-    critical = compassgo - 180
+    critical = compassgo - 90
     if (critical < 360):
         critical = critical + 360
     while (i.get_compass(45) != compassto):
@@ -50,7 +50,7 @@ def gl():
 def gr():
     print('gr')
     compassgo = i.get_compass(45)
-    compassto = compassgo - 90
+    compassto = compassgo - 85
     if (compassto < 0):
         compassto = compassto + 360
     critical = compassgo + 90
